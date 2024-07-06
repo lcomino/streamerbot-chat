@@ -41,10 +41,10 @@
       color: #ca1111;
     }
     .chat__item.twitch .chat__user .platform-logo{
-      background-image: url('../assets/img/twitch.png');
+      background-image: url('../img/twitch.png');
     }
     .chat__item.youtube .chat__user .platform-logo{
-      background-image: url('../assets/img/youtube.png');
+      background-image: url('../img/youtube.png');
     }
     .chat__item .chat__user .platform-logo{
       width: 16px;
