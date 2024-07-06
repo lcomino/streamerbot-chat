@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chat Streamer.BOT</title>
+  <style>
+    *{box-sizing: border-box;}
+    body{padding: 0; margin: 0; font-family: Arial, Helvetica, sans-serif;}
+    .chat{
+      display: flex;
+      flex-direction: column-reverse;
+      padding: 10px;
+      width: 400px;
+      height: 100vh;
+      overflow-y: auto;
+      overflow-x: hidden;      
+      scrollbar-width: none; /* Firefox */
+    }
+    .chat::-webkit-scrollbar { /* WebKit */
+      width: 0;
+      height: 0;
+    }
+    .chat__item{
+      position: relative;
+      padding: 10px;
+      margin:10px 0;
+      transition: transform 0.3s ease, opacity 0.3s ease;
+      opacity: 0;
+    }
+    .chat__item .chat__user{
+      padding:5px 10px;
+      border-radius: 5px;
+      font-weight: 600;
+      position: absolute;
+      top:-5px;
+      left:-5px;
+      background-color: rgb(255, 255, 255);
+      display: flex;
+      align-items: center;
+      box-shadow: 2px 2px 2px rgba(0,0,0,0.2);
+      z-index: 2;
+    }
+    .chat__item.twitch .chat__user{
+      color: #6440a5;
+    }
+    .chat__item.youtube .chat__user{
+      color: #ca1111;
+    }
+    .chat__item.twitch .chat__user .platform-logo{
+      background-image: url('assets/img/twitch.png');
+    }
+    .chat__item.youtube .chat__user .platform-logo{
+      background-image: url('assets/img/youtube.png');
+    }
+    .chat__item .chat__user .platform-logo{
+      width: 16px;
+      height: 16px;
+      margin-right: 5px;
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
+    }
+    .chat__item .chat__user .chat__username{
+      margin-left:5px;
+    }
+    .chat__item .chat__message{
+      margin-top:5px;
+      padding:15px;
+      border-radius: 5px;
+      font-weight: 600;
+      background-color: #fdfdfd;
+      box-shadow: 2px 2px 2px rgba(0,0,0,0.05);
+      z-index: 1;
+      color:#333;
+    }
+  </style>
+</head>
+<body>
+  <div class="chat"></div>
+  <script>
+    const streamerBotChatOverlay = (() => {      
+
+      const _subscribeWebSocket = ()=> {
+        const websocket = new WebSocket('ws://192.168.200.114:8080')
+        websocket.onopen = (event) => {
+          console.log('Conectado ao Streamer.Bot!')
+
+          const subscribeMessage = {
+            "request": "Subscribe",
+            "id": "123123123123",
+            "events": {
+              "Twitch": ["ChatMessage"],
+              "YouTube": ["ChatMessage"]
+            }
+          };
+          websocket.send(JSON.stringify(subscribeMessage))
+        }
+        return websocket;
+      }
+      
+      let _chatContainer = '';
+      let messages = []
+      let config = {
+        maxMessages: 10,
+        colorTwitch: '#6440a5',
+        colorYouTube: '#ca1111'
+      }
+
+      const platformConfig = {
+        "generic" : {
+          logo: 'twitch.png',
+          color: 'red'
+        },
+        "twitch" : {
+          logo: 'twitch.png',
+          color: '#6440a5'
+        },
+        "youtube" : {
+          logo: 'youtube.png',
+          color: '#ca1111'
+        }
+      }
+
+      const _getPlatformConfig = (platform) => {
+        return platformConfig[platform] || platformConfig['generic']
+      }
+
+      const _newMessage = (array, index) => {        
+        const newMessage = array[index];
+        _chatContainer.prepend(newMessage);
+        requestAnimationFrame(() => {
+          newMessage.style.opacity = 1;
+          newMessage.style.transform = 'translateY(0)';
+        });
+        _chatContainer.scrollTop = _chatContainer.scrollHeight;
+        if(array.length >= config.maxMessages){
+          array.shift()          
+          _removeFirstMessage()
+        }        
+      }
+
+      Object.defineProperty(messages, "push", {
+        value: function () {
+          for (var i = 0, n = this.length, l = arguments.length; i < l; i++, n++) {
+            _newMessage(this, n, this[n] = arguments[i]);
+          }
+          return n;
+        }
+      });
+
+      const _createChatItem = (user, message, platform, color) => {
+        const chatItem = document.createElement('div')
+        const platformConfig = _getPlatformConfig(platform.toLowerCase())
+        chatItem.classList.add('chat__item')
+        chatItem.classList.add(platform.toLowerCase())
+        chatItem.style.transform = 'translateY(20px)';
+        const chatUser = document.createElement('div')
+        chatUser.classList.add('chat__user')
+        chatUser.innerHTML = `<span class="platform-logo"></span> | <span class="chat__username" style="color:${color || platformConfig.color}">${user}</span>`
+        const chatMessage = document.createElement('div')
+        chatMessage.classList.add('chat__message')
+        chatMessage.innerHTML = message;
+        chatItem.appendChild(chatUser)
+        chatItem.appendChild(chatMessage)
+
+        return chatItem;
+      }
+
+      const _removeFirstMessage = () => {
+        let chatItens = _chatContainer.querySelectorAll('.chat__item')
+        if(chatItens.length > 0){
+          chatItens[chatItens.length - 1].remove();
+        }
+      }
+
+      const _load = (config) => {
+        _chatContainer = document.querySelector('.chat')
+        const websocket = _subscribeWebSocket()
+        
+        websocket.onmessage = (message) => {
+          if(message){
+            const wsData = JSON.parse(message.data);
+            console.log(wsData)
+            if(wsData.event){
+              const data = wsData.data.message
+              console.log(data)
+              let chatMessage = _createChatItem(
+                  data.displayName, 
+                  data.message, 
+                  wsData.event.source,
+                  data.color)
+              messages.push(chatMessage)
+            }
+          }
+        }
+      }
+
+      return {
+        load : _load
+      }
+    })()
+
+    streamerBotChatOverlay.load({
+      maxMessages: 10
+    })
+  </script>
+</body>
+</html>
