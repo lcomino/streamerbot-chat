@@ -1,0 +1,69 @@
+*{box-sizing: border-box;}
+    body{padding: 0; margin: 0; font-family: Arial, Helvetica, sans-serif;}
+    .chat{
+      display: flex;
+      flex-direction: column-reverse;
+      padding: 10px;
+      width: 400px;
+      height: 100vh;
+      overflow-y: auto;
+      overflow-x: hidden;      
+      scrollbar-width: none; /* Firefox */
+    }
+    .chat::-webkit-scrollbar { /* WebKit */
+      width: 0;
+      height: 0;
+    }
+    .chat__item{
+      position: relative;
+      padding: 10px;
+      margin:10px 0;
+      transition: transform 0.3s ease, opacity 0.3s ease;
+      opacity: 0;
+    }
+    .chat__item .chat__user{
+      padding:5px 10px;
+      border-radius: 5px;
+      font-weight: 600;
+      position: absolute;
+      top:-5px;
+      left:-5px;
+      background-color: rgb(255, 255, 255);
+      display: flex;
+      align-items: center;
+      box-shadow: 2px 2px 2px rgba(0,0,0,0.2);
+      z-index: 2;
+    }
+    .chat__item.twitch .chat__user{
+      color: #6440a5;
+    }
+    .chat__item.youtube .chat__user{
+      color: #ca1111;
+    }
+    .chat__item.twitch .chat__user .platform-logo{
+      background-image: url('assets/img/twitch.png');
+    }
+    .chat__item.youtube .chat__user .platform-logo{
+      background-image: url('assets/img/youtube.png');
+    }
+    .chat__item .chat__user .platform-logo{
+      width: 16px;
+      height: 16px;
+      margin-right: 5px;
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
+    }
+    .chat__item .chat__user .chat__username{
+      margin-left:5px;
+    }
+    .chat__item .chat__message{
+      margin-top:5px;
+      padding:15px;
+      border-radius: 5px;
+      font-weight: 600;
+      background-color: #fdfdfd;
+      box-shadow: 2px 2px 2px rgba(0,0,0,0.05);
+      z-index: 1;
+      color:#333;
+    }
