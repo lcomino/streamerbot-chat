@@ -81,8 +81,8 @@
   <script>
     const streamerBotChatOverlay = (() => {      
 
-      const _subscribeWebSocket = ()=> {
-        const websocket = new WebSocket('ws://192.168.200.114:8080')
+      const _subscribeWebSocket = (websocketAddress)=> {
+        const websocket = new WebSocket(websocketAddress || 'ws://127.0.0.1:8080')
         websocket.onopen = (event) => {
           console.log('Conectado ao Streamer.Bot!')
 
@@ -103,8 +103,7 @@
       let messages = []
       let config = {
         maxMessages: 10,
-        colorTwitch: '#6440a5',
-        colorYouTube: '#ca1111'
+        websocketAddress: 'ws://127.0.0.1:8080'
       }
 
       const platformConfig = {
@@ -176,7 +175,7 @@
 
       const _load = (config) => {
         _chatContainer = document.querySelector('.chat')
-        const websocket = _subscribeWebSocket()
+        const websocket = _subscribeWebSocket(config.websocketAddress)
         
         websocket.onmessage = (message) => {
           if(message){
@@ -202,7 +201,8 @@
     })()
 
     streamerBotChatOverlay.load({
-      maxMessages: 10
+      maxMessages: 10,
+      websocketAddress: 'ws://192.168.200.114:8080'
     })
   </script>
 </body>
