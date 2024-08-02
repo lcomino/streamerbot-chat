@@ -22,7 +22,8 @@ const streamerBotChatOverlay = (() => {
   let messages = []
   let config = {
     maxMessages: 10,
-    websocketAddress: 'ws://127.0.0.1:8080'
+    websocketAddress: 'ws://127.0.0.1:8080',
+    usersToIgnore: ['ZoidepombaReal', 'StreamElements']
   }
 
   const platformConfig = {
@@ -102,13 +103,14 @@ const streamerBotChatOverlay = (() => {
         console.log(wsData)
         if(wsData.event){
           const data = wsData.data.message
-          console.log(data)
-          let chatMessage = _createChatItem(
-              data.displayName, 
-              data.message, 
-              wsData.event.source,
-              data.color)
-          messages.push(chatMessage)
+          if(!config.usersToIgnore.includes(data.displayName)){
+            let chatMessage = _createChatItem(
+                data.displayName, 
+                data.message, 
+                wsData.event.source,
+                data.color)
+            messages.push(chatMessage)
+          }
         }
       }
     }
@@ -121,5 +123,6 @@ const streamerBotChatOverlay = (() => {
 
 streamerBotChatOverlay.load({
   maxMessages: 10,
-  websocketAddress: 'ws://192.168.200.114:8080'
+  websocketAddress: 'ws://192.168.200.114:8080',
+  usersToIgnore: ['ZoidePombaReal', 'StreamElements']
 })
