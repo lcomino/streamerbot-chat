@@ -1,0 +1,24 @@
+{
+    "maxMessages": 10,
+    "maxTime": 15,
+    "websocketAddress": "ws://127.0.0.1:8080",
+    "ignoredUsers": ["NotRotom", "NightBot", "StreamElements", "StreamLabs"],
+    "usersColor" : [    
+    { 
+      "userName": "Gelevilha",
+      "color": "#10478f"
+    },
+    {
+      "userName" : "Prismatica Lontra",
+      "color": "#8943c0"
+    },
+    {
+      "userName": "Victor Gabriel Gonçalves da Silva Vieira",
+      "color": "#22d3e7"
+    },
+    {
+      "userName": "WYLTHER GAMER",
+      "color": "#ea4c47"
+    }
+  ]
+}
