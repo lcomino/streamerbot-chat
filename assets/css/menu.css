@@ -1,0 +1,48 @@
+header {
+    background: #6441a5;
+    color: white;
+    padding: 15px 20px;
+}
+
+header h1 {
+    margin: 0 0 15px 0;
+    text-align: center;
+    font-size: 24px;
+}
+
+.top-menu {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+.menu-link {
+    color: white;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 8px 15px;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+}
+
+.menu-link:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.menu-link i {
+    font-size: 16px;
+}
+
+@media (max-width: 768px) {
+    .top-menu {
+        flex-wrap: wrap;
+    }
+    
+    .menu-link {
+        flex: 1;
+        justify-content: center;
+        min-width: 100px;
+    }
+} 
