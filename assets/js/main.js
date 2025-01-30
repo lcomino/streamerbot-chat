@@ -25,7 +25,10 @@ const streamerBotChatOverlay = (() => {
     websocketAddress: 'ws://127.0.0.1:8080',
     ignoredUsers: [],
     maxTime: 15
-  }  
+  }
+  
+  let lastPlayedSound = new Date();
+  let lastUserName = 'Zoidepomba'
 
   const platformConfig = {
     "generic" : {
@@ -74,6 +77,19 @@ const streamerBotChatOverlay = (() => {
     date.setSeconds(date.getSeconds()+config.maxTime)
     return date.getTime()
   }
+  
+  const _playSound = (userName) => {
+    let now = new Date()
+    console.log('NOw:', now)
+    console.log('LPS:', lastPlayedSound)
+    if(userName != lastUserName || lastPlayedSound < now){
+      let audio = new Audio("http://127.0.0.1:5500/assets/audio/alert.ogg")
+      audio.volume = 0.2    
+      audio.play()
+      lastPlayedSound = _generateExpireTime()
+      lastUserName = userName
+    }
+  }
 
   const _createChatItem = (user, message, platform, color) => {
     const chatItem = document.createElement('div')
@@ -90,6 +106,8 @@ const streamerBotChatOverlay = (() => {
     chatMessage.innerHTML = message;
     chatItem.appendChild(chatUser)
     chatItem.appendChild(chatMessage)
+        
+    _playSound(user)
 
     return chatItem;
   }
@@ -140,7 +158,7 @@ const streamerBotChatOverlay = (() => {
   }
 
   const _startCheckOldMessages = () => {
-    setInterval(_removeExpiredMessages, 1000)
+    //setInterval(_removeExpiredMessages, 1000)
   }
 
   
@@ -174,6 +192,7 @@ const streamerBotChatOverlay = (() => {
   }
 
   return {
+    playsound: _playSound,
     load : _load
   }
 })()

@@ -1,8 +1,8 @@
 {
     "maxMessages": 10,
-    "maxTime": 15,
+    "maxTime": 25,
     "websocketAddress": "ws://127.0.0.1:8080",
-    "ignoredUsers": ["NotRotom", "NightBot", "StreamElements", "StreamLabs"],
+    "ignoredUsers": ["ZoidePombaReal", "NotRotom", "NightBot", "StreamElements", "StreamLabs"],
     "usersColor" : [    
     { 
       "userName": "Gelevilha",
