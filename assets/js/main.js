@@ -171,13 +171,72 @@ const streamerBotChatOverlay = (() => {
     }
   }
 
-  
+  const _loadConfig = async () => {
+    // Tentar carregar do localStorage primeiro
+    let config = JSON.parse(localStorage.getItem('chatConfig'));
+    
+    // Se não existir no localStorage, carregar do config.json e salvar
+    if (!config) {
+        try {
+            const response = await fetch('config.json');
+            config = await response.json();
+            
+            // Salvar no localStorage na primeira carga
+            localStorage.setItem('chatConfig', JSON.stringify(config));
+        } catch (error) {
+            console.error('Erro ao carregar configurações:', error);
+            return;
+        }
+    }
+    
+    return config;
+  }
 
-  const _load = (newConfig) => {
-    config = newConfig
-    _chatContainer = document.querySelector('.chat')
-    const websocket = _subscribeWebSocket(config.websocketAddress)
-    _startCheckOldMessages()
+  const _updateUserStats = (userName, message, platform) => {
+    // Pegar estatísticas existentes ou criar novo objeto
+    let userStats = JSON.parse(localStorage.getItem('userStats')) || {};
+    
+    // Se o usuário não existe, criar entrada para ele
+    if (!userStats[userName]) {
+      userStats[userName] = {
+        userName: userName,
+        platform: platform,
+        totalMessages: 0,
+        totalCommands: 0,
+        commands: {},
+        lastMessage: '',
+        lastMessageTime: null
+      };
+    }
+
+    // Atualizar estatísticas
+    userStats[userName].totalMessages++;
+    userStats[userName].lastMessage = message;
+    userStats[userName].lastMessageTime = new Date().toISOString();
+    
+    // Verificar se é um comando
+    if (message.startsWith('!')) {
+      userStats[userName].totalCommands++;
+      
+      // Extrair o nome do comando
+      const command = message.split(' ')[0].toLowerCase();
+      
+      // Contar uso do comando específico
+      if (!userStats[userName].commands[command]) {
+        userStats[userName].commands[command] = 0;
+      }
+      userStats[userName].commands[command]++;
+    }
+
+    // Salvar no localStorage
+    localStorage.setItem('userStats', JSON.stringify(userStats));
+  }
+
+  const _load = async () => {
+    config = await _loadConfig();
+    _chatContainer = document.querySelector('.chat');
+    const websocket = _subscribeWebSocket(config.websocketAddress);
+    _startCheckOldMessages();
     websocket.onmessage = (message) => {
       if(message){
         const wsData = JSON.parse(message.data);
@@ -189,6 +248,9 @@ const streamerBotChatOverlay = (() => {
           console.log(data)
           const userName = wsData.event.source == 'Twitch' ? data.displayName : wsData.data.user.name 
           if(!config.ignoredUsers.includes(userName)){
+            // Atualizar estatísticas do usuário
+            _updateUserStats(userName, message, wsData.event.source);
+            
             let chatMessage = _createChatItem(
                 userName, 
                 message, 
@@ -207,14 +269,5 @@ const streamerBotChatOverlay = (() => {
   }
 })()
 
-fetch('config.json')
-  .then(response => {
-    if (!response.ok) {
-      throw new Error('Erro ao carregar o arquivo de configuração.');
-    }
-    return response.json();
-  })
-  .then(config => {    
-    streamerBotChatOverlay.load(config)
-  })
-  .catch(error => console.error('Erro:', error));
+// Inicialização
+streamerBotChatOverlay.load();

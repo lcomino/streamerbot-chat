@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estatísticas do Chat</title>
+    <link rel="stylesheet" href="assets/css/stats.css">
+</head>
+<body>
+    <div class="stats-container">
+        <h1>Estatísticas do Chat</h1>
+        
+        <div class="stats-filters">
+            <input type="text" id="searchUser" placeholder="Buscar usuário...">
+            <select id="platformFilter">
+                <option value="">Todas as plataformas</option>
+                <option value="Twitch">Twitch</option>
+                <option value="YouTube">YouTube</option>
+            </select>
+        </div>
+
+        <div class="stats-grid" id="statsGrid">
+            <!-- Será preenchido via JavaScript -->
+        </div>
+    </div>
+
+    <script src="assets/js/stats.js"></script>
+</body>
+</html> 

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configurações do Chat</title>
+    <link rel="stylesheet" href="assets/css/config.css">
+</head>
+<body>
+    <div class="config-container">
+        <h1>Configurações do Chat</h1>
+        
+        <form id="configForm">
+            <div class="form-group">
+                <label for="maxMessages">Limite de mensagens:</label>
+                <input type="number" id="maxMessages" name="maxMessages" min="1">
+            </div>
+
+            <div class="form-group">
+                <label for="maxTime">Tempo de desaparecimento (segundos):</label>
+                <input type="number" id="maxTime" name="maxTime" min="0">
+            </div>
+
+            <div class="form-group">
+                <label for="websocketAddress">Endereço do WebSocket:</label>
+                <input type="text" id="websocketAddress" name="websocketAddress">
+            </div>
+
+            <div class="form-group">
+                <label>Usuários Ignorados:</label>
+                <div id="ignoredUsers">
+                    <!-- Será preenchido via JavaScript -->
+                </div>
+                <button type="button" id="addIgnoredUser" class="secondary-button">Adicionar Usuário</button>
+            </div>
+
+            <div class="form-group">
+                <label>Cores dos Usuários:</label>
+                <div id="userColors">
+                    <!-- Será preenchido via JavaScript -->
+                </div>
+                <button type="button" id="addUserColor" class="secondary-button">Adicionar Usuário</button>
+            </div>
+
+            <div class="form-group">
+                <label>Outras Configurações:</label>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="playSound" name="playSound">
+                    <label for="playSound">Tocar Som</label>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="removeOldMessages" name="removeOldMessages">
+                    <label for="removeOldMessages">Remover Mensagens Antigas</label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="removeOldMessagesInterval">Intervalo de Remoção (ms):</label>
+                <input type="number" id="removeOldMessagesInterval" name="removeOldMessagesInterval" min="1000">
+            </div>
+
+            <button type="submit" class="save-button">Salvar</button>
+        </form>
+    </div>
+
+    <script src="assets/js/config.js"></script>
+</body>
+</html> 
