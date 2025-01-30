@@ -24,7 +24,10 @@ const streamerBotChatOverlay = (() => {
     maxMessages: 10,
     websocketAddress: 'ws://127.0.0.1:8080',
     ignoredUsers: [],
-    maxTime: 15
+    maxTime: 15,
+    removeOldMessages: true,
+    removeOldMessagesInterval: 20000,
+    playSound: true
   }
   
   let lastPlayedSound = new Date();
@@ -106,8 +109,13 @@ const streamerBotChatOverlay = (() => {
     chatMessage.innerHTML = message;
     chatItem.appendChild(chatUser)
     chatItem.appendChild(chatMessage)
-        
-    _playSound(user)
+    if(config.removeOldMessages){
+      _removeExpiredMessages()
+    }
+
+    if(config.playSound){
+      _playSound(user)
+    }
 
     return chatItem;
   }
@@ -158,7 +166,9 @@ const streamerBotChatOverlay = (() => {
   }
 
   const _startCheckOldMessages = () => {
-    //setInterval(_removeExpiredMessages, 1000)
+    if(config.removeOldMessages){
+      setInterval(_removeExpiredMessages, config.removeOldMessagesInterval)
+    }
   }
 
   

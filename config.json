@@ -2,7 +2,7 @@
     "maxMessages": 10,
     "maxTime": 25,
     "websocketAddress": "ws://127.0.0.1:8080",
-    "ignoredUsers": ["ZoidePombaReal", "NotRotom", "NightBot", "StreamElements", "StreamLabs"],
+    "ignoredUsers": ["NotRotom", "NightBot", "StreamElements", "StreamLabs"], 
     "usersColor" : [    
     { 
       "userName": "Gelevilha",
@@ -20,5 +20,8 @@
       "userName": "WYLTHER GAMER",
       "color": "#ea4c47"
     }
-  ]
+  ],
+  "playSound": true,
+  "removeOldMessages": true,
+  "removeOldMessagesInterval": 20000
 }
