@@ -2,7 +2,7 @@
 function createMenu() {
     const menuHTML = `
     <header>
-        <h1>Streamer.BOT Chat Manager</h1>
+        <h1>Zoidepomba Live Manager</h1>
         <nav class="top-menu">
             <a href="index.html" class="menu-link">
                 <i class="fas fa-home"></i>
