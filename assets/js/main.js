@@ -195,6 +195,49 @@ const streamerBotChatOverlay = (() => {
   const _updateUserStats = (userName, message, platform) => {
     // Pegar estatísticas existentes ou criar novo objeto
     let userStats = JSON.parse(localStorage.getItem('userStats')) || {};
+    let specialStats = JSON.parse(localStorage.getItem('specialStats')) || {
+        firstMessages: {},
+        salves: [],
+        lurkers: []
+    };
+    
+    // Registrar primeiro usuário de cada plataforma
+    if (!specialStats.firstMessages[platform]) {
+        specialStats.firstMessages[platform] = {
+            userName: userName,
+            time: new Date().toISOString()
+        };
+    }
+
+    // Verificar comando !salve
+    if (message.toLowerCase().startsWith('!salve')) {
+        specialStats.salves.push({
+            userName: userName,
+            platform: platform,
+            message: message,
+            time: new Date().toISOString()
+        });
+    }
+
+    // Verificar comandos de lurk
+    if (message.toLowerCase().startsWith('!lurk') || message.toLowerCase().startsWith('!moita')) {
+        // Verificar se o usuário já não está na lista de lurkers
+        const existingLurker = specialStats.lurkers.find(lurker => 
+            lurker.userName === userName && lurker.platform === platform
+        );
+        
+        if (!existingLurker) {
+            specialStats.lurkers.push({
+                userName: userName,
+                platform: platform,
+                message: message,
+                time: new Date().toISOString()
+            });
+        }
+    }
+
+    // Salvar estatísticas especiais
+    localStorage.setItem('specialStats', JSON.stringify(specialStats));
     
     // Se o usuário não existe, criar entrada para ele
     if (!userStats[userName]) {

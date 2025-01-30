@@ -20,6 +20,10 @@ function createMenu() {
                 <i class="fas fa-chart-bar"></i>
                 <span>Estatísticas</span>
             </a>
+            <a href="credits.html" class="menu-link">
+                <i class="fas fa-star"></i>
+                <span>Créditos</span>
+            </a>
         </nav>
     </header>
     `;

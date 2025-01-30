@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Créditos da Live</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #000;
+            color: #fff;
+            font-family: 'Arial', sans-serif;
+            overflow: hidden;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+        }
+
+        .credits-wrapper {
+            width: 100%;
+            max-width: 800px;
+            position: relative;
+            perspective: 400px;
+            overflow: hidden;
+        }
+
+        .credits-content {
+            position: absolute;
+            width: 100%;
+            text-align: center;
+            transform-origin: 50% 100%;
+            animation: scroll-credits 60s linear infinite;
+        }
+
+        .credits-section {
+            margin-bottom: 60px;
+        }
+
+        .credits-section h2 {
+            color: #ffd700;
+            font-size: 36px;
+            margin-bottom: 20px;
+        }
+
+        .credits-section .items {
+            font-size: 24px;
+            line-height: 1.6;
+        }
+
+        .credits-section .item {
+            margin-bottom: 15px;
+        }
+
+        .platform-badge {
+            font-size: 18px;
+            padding: 3px 8px;
+            border-radius: 4px;
+            margin-left: 8px;
+        }
+
+        .platform-badge.twitch {
+            background: #6441a5;
+        }
+
+        .platform-badge.youtube {
+            background: #ff0000;
+        }
+
+        .stats {
+            font-size: 20px;
+            color: #888;
+        }
+
+        @keyframes scroll-credits {
+            0% {
+                transform: translateY(100%);
+            }
+            100% {
+                transform: translateY(-100%);
+            }
+        }
+
+        /* Fade nas bordas */
+        .credits-wrapper::after {
+            content: '';
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 20%;
+            background: linear-gradient(transparent, black);
+            pointer-events: none;
+        }
+
+        .credits-wrapper::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 20%;
+            background: linear-gradient(black, transparent);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* Adicionar estilos para destaque especial */
+        .first-message {
+            color: #ffd700;
+            font-weight: bold;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+        }
+
+        .salve-message {
+            color: #00ff00;
+            font-style: italic;
+        }
+
+        .lurker-message {
+            color: #9146ff; /* Cor roxa da Twitch */
+            font-style: italic;
+            text-shadow: 0 0 10px rgba(145, 70, 255, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="credits-wrapper">
+        <div class="credits-content" id="creditsContent">
+            <!-- Será preenchido via JavaScript -->
+        </div>
+    </div>
+
+    <script>
+        class CreditsRoll {
+            constructor() {
+                this.stats = this.loadStats();
+                this.specialStats = this.loadSpecialStats();
+                this.render();
+            }
+
+            loadStats() {
+                return JSON.parse(localStorage.getItem('userStats')) || {};
+            }
+
+            loadSpecialStats() {
+                return JSON.parse(localStorage.getItem('specialStats')) || {
+                    firstMessages: {},
+                    salves: [],
+                    lurkers: []
+                };
+            }
+
+            getTopChatters() {
+                return Object.values(this.stats)
+                    .sort((a, b) => b.totalMessages - a.totalMessages)
+                    .slice(0, 15);
+            }
+
+            getTopCommands() {
+                const commandsCount = {};
+                Object.values(this.stats).forEach(user => {
+                    Object.entries(user.commands || {}).forEach(([cmd, count]) => {
+                        commandsCount[cmd] = (commandsCount[cmd] || 0) + count;
+                    });
+                });
+
+                return Object.entries(commandsCount)
+                    .sort(([,a], [,b]) => b - a)
+                    .slice(0, 10);
+            }
+
+            render() {
+                const container = document.getElementById('creditsContent');
+                const topChatters = this.getTopChatters();
+                const topCommands = this.getTopCommands();
+
+                container.innerHTML = `
+                    <div class="credits-section">
+                        <h2>Primeiro a Chegar</h2>
+                        <div class="items">
+                            ${Object.entries(this.specialStats.firstMessages).map(([platform, data]) => `
+                                <div class="item first-message">
+                                    ${data.userName}
+                                    <span class="platform-badge ${platform.toLowerCase()}">${platform}</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+
+                    <div class="credits-section">
+                        <h2>MANDA SALVE</h2>
+                        <div class="items">
+                            ${this.specialStats.salves.map(salve => `
+                                <div class="item salve-message">
+                                    ${salve.userName}
+                                    <span class="platform-badge ${salve.platform.toLowerCase()}">${salve.platform}</span>
+                                    <div class="stats">
+                                        "${salve.message}"
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+
+                    <div class="credits-section">
+                        <h2>Lurkers da Live</h2>
+                        <div class="items">
+                            ${(this.specialStats.lurkers || []).map(lurker => `
+                                <div class="item lurker-message">
+                                    ${lurker.userName}
+                                    <span class="platform-badge ${lurker.platform.toLowerCase()}">${lurker.platform}</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+
+                    <div class="credits-section">
+                        <h2>Participações sempre Especiais</h2>
+                        <div class="items">
+                            ${topChatters.map((user, index) => `
+                                <div class="item">
+                                    ${user.userName}
+                                    <span class="platform-badge ${user.platform.toLowerCase()}">${user.platform}</span>
+                                    <div class="stats">
+                                        ${user.totalMessages} mensagens • ${user.totalCommands} comandos
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+
+                    <div class="credits-section">
+                        <h2>Comandos Mais Usados</h2>
+                        <div class="items">
+                            ${topCommands.map(([cmd, count]) => `
+                                <div class="item">
+                                    ${cmd} <span class="stats">(${count}x)</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+
+                    <div class="credits-section">
+                        <h2>Obrigado por Assistir!</h2>
+                        <div class="items">
+                            <div class="item">Até a próxima live!</div>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        // Inicializar quando a página carregar
+        document.addEventListener('DOMContentLoaded', () => {
+            new CreditsRoll();
+        });
+    </script>
+</body>
+</html> 
