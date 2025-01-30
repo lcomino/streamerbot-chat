@@ -27,7 +27,9 @@ const streamerBotChatOverlay = (() => {
     maxTime: 15,
     removeOldMessages: true,
     removeOldMessagesInterval: 20000,
-    playSound: true
+    playSound: true,
+    animateMessage: true,
+    usersColor: []
   }
   
   let lastPlayedSound = new Date();
@@ -54,11 +56,15 @@ const streamerBotChatOverlay = (() => {
 
   const _newMessage = (array, index) => {        
     const newMessage = array[index];
+    const userColor = _getUserColor(newMessage)
     _chatContainer.prepend(newMessage);
-    requestAnimationFrame(() => {
-      newMessage.style.opacity = 1;
-      newMessage.style.transform = 'translateY(0)';
-    });
+    if(config.animateMessage){
+      requestAnimationFrame(() => {
+        newMessage.style.opacity = 1;
+        newMessage.style.transform = 'translateY(0)';
+        newMessage.style.color = userColor;
+      });
+    }
     _chatContainer.scrollTop = _chatContainer.scrollHeight;
     if(array.length >= config.maxMessages){
       array.shift()          

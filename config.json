@@ -23,5 +23,6 @@
   ],
   "playSound": true,
   "removeOldMessages": true,
-  "removeOldMessagesInterval": 20000
+  "removeOldMessagesInterval": 20000,
+  "animateMessage": true
 }
