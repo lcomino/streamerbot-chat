@@ -115,11 +115,11 @@ const streamerBotChatOverlay = (() => {
     chatItem.appendChild(chatUser)
     chatItem.appendChild(chatMessage)
     if(config.removeOldMessages){
-      _removeExpiredMessages()
+      //_removeExpiredMessages()
     }
 
     if(config.playSound){
-      _playSound(user)
+      //_playSound(user)
     }
 
     return chatItem;
@@ -172,7 +172,7 @@ const streamerBotChatOverlay = (() => {
 
   const _startCheckOldMessages = () => {
     if(config.removeOldMessages){
-      setInterval(_removeExpiredMessages, config.removeOldMessagesInterval)
+      //setInterval(_removeExpiredMessages, config.removeOldMessagesInterval)
     }
   }
 
